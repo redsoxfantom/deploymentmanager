@@ -1,0 +1,14 @@
+html
+    head
+        title=project.name
+    body
+        include commonheader.pug
+        h1=project.name
+        p=project.description
+        if project.gitrepo !== undefined
+            a(href=project.gitrepo) Github
+        if project.artifacts !== undefined
+            ul
+                each artifact in project.artifacts
+                    li
+                        a(href='/projects/'+projectid+'/'+artifact.number) #{artifact.number}

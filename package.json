@@ -1,0 +1,17 @@
+{
+  "name": "deploymentmanager",
+  "version": "0.0.1",
+  "description": "Website to allow access to compiled software deployments",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "redsoxfantom",
+  "license": "ISC",
+  "dependencies": {
+    "debug": "^4.1.0",
+    "express": "^4.16.3",
+    "morgan": "^1.9.1",
+    "pug": "^2.0.3"
+  }
+}
