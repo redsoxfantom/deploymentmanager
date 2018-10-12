@@ -1,5 +1,6 @@
 const path = require('path')
 const fs = require('fs')
+const async = require('async')
 const fsManager = require('./filesystemmanager')
 const rootdir = path.join(fsManager.dynamics,"projects")
 
@@ -15,11 +16,11 @@ function getAllProjects(callback) {
         }
 
         var arr = []
-        for(var i = 0; i < files.length; i++) {
-            var file = path.join(rootdir,files[i])
+        async.eachSeries(files,(file,cb)=>{
+            file = path.join(rootdir,file)
             var isdir = fs.lstatSync(file).isDirectory();
             if(isdir) {
-                var dirname = files[i]
+                var dirname = path.basename(file)
                 var projectfile = path.join(file,"project.json")
                 if(fs.existsSync(projectfile)) {
                     info = fs.readFileSync(projectfile)
@@ -30,8 +31,10 @@ function getAllProjects(callback) {
                     })
                 }
             }
-        }
-        callback(arr)
+            cb()
+        },(err)=>{
+            callback(arr)
+        })
     })
 }
 
