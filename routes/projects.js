@@ -22,8 +22,10 @@ router.get('/new',(req,res)=>{
 })
 
 router.post('/new',(req,res)=>{
-    console.log(req.body)
-    res.send("")
+    projectdef = req.body
+    projectmanager.createNewProject(projectdef,()=>{
+        res.redirect('/projects')
+    })
 })
 
 module.exports = router;
