@@ -1,0 +1,24 @@
+html
+    head
+        title='New Project'
+    body
+        include commonheader.pug
+        form(method='post', action='/projects/new')
+            div
+                label(for='name') Name:
+                div
+                    input(type='text', name='name')
+            div
+                label(for='desc') Description:
+                div
+                    input(type='text', name='desc')
+            div
+                label(for='gitrepo') Github URL:
+                div
+                    input(type='text', name='gitrepo')
+            div
+                label(for='numartifacts') Number of Artifacts:
+                div
+                    input(type='number', name='numartifacts')
+            div
+                button(type='submit') Submit

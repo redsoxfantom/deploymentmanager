@@ -8,13 +8,22 @@ router.get('/',(req,res)=>{
     })
 })
 
-router.get('/:projectid',(req,res)=>{
+router.get('/project/:projectid',(req,res)=>{
     const projectid = req.params.projectid
     projectmanager.getProjectData(projectid,(projectdata)=>{
         res.locals.project=projectdata
         res.locals.projectid=projectid
         res.render('project')
     })
+})
+
+router.get('/new',(req,res)=>{
+    res.render('newproject')
+})
+
+router.post('/new',(req,res)=>{
+    console.log(req.body)
+    res.send("")
 })
 
 module.exports = router;
