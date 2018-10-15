@@ -3,11 +3,14 @@ const app = express()
 const config = require('./config.json')
 const port = config.port
 const logger = require('morgan')
+const bodyparser = require('body-parser')
 const path = require('path')
 const projects = require('./routes/projects.js')
 
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+app.use(bodyparser.urlencoded({type:'*/*',extended:true}))
 app.use(logger('dev'))
 app.use(express.static(path.join(__dirname, 'public')));
 app.use('/projects',projects)
