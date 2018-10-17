@@ -3,7 +3,7 @@ const fs = require('fs')
 const async = require('async')
 const fsManager = require('./filesystemmanager')
 const rootdir = path.join(fsManager.dynamics,"projects")
-const querystring = require('querystring')
+const uuid = require('uuid/v4')
 
 if(!fs.existsSync(rootdir)) {
     fsManager.mkdir(rootdir)
@@ -34,7 +34,8 @@ function createNewProject(projectdefinition,callback) {
         projectjson['gitrepo'] = projectdefinition['gitrepo']
     }
 
-    foldername = querystring.escape(projectjson.name)
+    foldername = uuid()
+    projectjson['uuid'] = foldername
     projectstr = JSON.stringify(projectjson)
     folderpath = path.join(rootdir,foldername)
     fs.mkdir(folderpath,(err)=>{
@@ -63,7 +64,7 @@ function getAllProjects(callback) {
                     info = fs.readFileSync(projectfile)
                     var projinfo = JSON.parse(info)
                     arr.push({
-                        "projectdir":querystring.escape(dirname),
+                        "projectdir":dirname,
                         "projectname":projinfo.name
                     })
                 }
@@ -78,13 +79,14 @@ function getAllProjects(callback) {
 function getProjectData(projectid, callback) {
     const projinfofile = path.join(rootdir,projectid,"project.json")
     if(!fs.existsSync(projinfofile)) {
-        callback({})
+        callback()
     }
-
-    fs.readFile(projinfofile,(err,info)=>{
-        const projinfo = JSON.parse(info)
-        callback(projinfo)
-    })
+    else {
+        fs.readFile(projinfofile, (err, info) => {
+            const projinfo = JSON.parse(info)
+            callback(projinfo)
+        })
+    }
 }
 
 module.exports.getAllProjects = (callback) => {getAllProjects(callback)}
