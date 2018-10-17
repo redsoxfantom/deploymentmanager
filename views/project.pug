@@ -6,9 +6,12 @@ html
         h1=project.name
         p=project.description
         if project.gitrepo !== undefined
-            a(href=project.gitrepo) Github
+            div
+                a(href=project.gitrepo) Github
         if project.artifacts !== undefined
             ul
                 each artifact in project.artifacts
                     li
                         a(href='/projects/project/'+projectid+'/'+artifact.number) #{artifact.number}
+        div
+            a(href='/projects/project/'+projectid+'/upload') Upload Artifact

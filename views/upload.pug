@@ -1,0 +1,18 @@
+html
+    head
+        title=project.name
+    body
+        include commonheader.pug
+        h1=project.name
+        form(method='post', action='/projects/'+projectid+'/upload')
+            div
+                label(for='desc') Artifact Description:
+                div
+                    input(type='text', name='desc')
+            if project.gitrepo !== undefined
+                div
+                    label(for='commitid') Commit ID:
+                    div
+                        input(type='text', name='commitid')
+            div
+                button(type='submit') Submit

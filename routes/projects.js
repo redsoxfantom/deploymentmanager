@@ -11,9 +11,26 @@ router.get('/',(req,res)=>{
 router.get('/project/:projectid',(req,res)=>{
     const projectid = req.params.projectid
     projectmanager.getProjectData(projectid,(projectdata)=>{
-        res.locals.project=projectdata
-        res.locals.projectid=projectid
-        res.render('project')
+        if(projectdata === undefined) {
+            res.redirect('/projects')
+        } else {
+            res.locals.project = projectdata
+            res.locals.projectid = projectid
+            res.render('project')
+        }
+    })
+})
+
+router.get('/project/:projectid/upload',(req,res)=>{
+    const projectid = req.params.projectid
+    projectmanager.getProjectData(projectid,(projectdata)=>{
+        if(projectdata === undefined) {
+            res.redirect('/projects')
+        } else {
+            res.locals.project = projectdata
+            res.locals.projectid = projectid
+            res.render('upload')
+        }
     })
 })
 
