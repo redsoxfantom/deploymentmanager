@@ -147,7 +147,7 @@ function uploadArtifact(projectid,description,commitid,files,callback) {
     })
 }
 
-module.exports.getAllProjects = (callback) => {getAllProjects(callback)}
-module.exports.getProjectData = (projectid,callback)=>{getProjectData(projectid,callback)}
+module.exports.getAllProjects = getAllProjects
+module.exports.getProjectData = getProjectData
 module.exports.createNewProject = createNewProject
 module.exports.uploadArtifact = uploadArtifact
