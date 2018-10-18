@@ -131,8 +131,10 @@ function createNewArtifact(projectdata,description,commitid,callback) {
         artifactpath = path.join(projectdata.artifactpath,'0')
         fsManager.mkdir(artifactpath)
     } else {
-        const preexistingartifacts = fs.readdirSync(projectdata.artifactpath)
-        const newartifactname = preexistingartifacts.length
+        const preexistingartifacts = fs.readdirSync(projectdata.artifactpath).sort((a,b)=>{
+            return a - b
+        })
+        const newartifactname = parseInt(preexistingartifacts[preexistingartifacts.length-1])+1
         artifactpath = path.join(projectdata.artifactpath,newartifactname.toString())
         fsManager.mkdir(artifactpath)
     }
