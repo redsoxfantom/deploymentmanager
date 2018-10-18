@@ -7,7 +7,13 @@ function getAllProjectArtifacts(artifactpath) {
     const artifacts = fs.readdirSync(artifactpath)
     const artifactnames = []
     artifacts.forEach((artifact)=>{
-        artifactnames.push(path.basename(artifact))
+        artifactfile = path.join(artifactpath,artifact,"artifact.json")
+        artifactfiledata = fs.readFileSync(artifactfile)
+        artifactdata = JSON.parse(artifactfiledata)
+        artifactnames.push({
+            name: path.basename(artifact),
+            datecreated: artifactdata.datecreated
+        })
     })
     return artifactnames
 }

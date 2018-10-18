@@ -13,6 +13,6 @@ html
             ul
                 each artifact in project.artifacts
                     li
-                        a(href='/project/'+projectid+'/'+artifact) #{artifact}
+                        a(href='/project/'+projectid+'/'+artifact.name) #{artifact.name} (#{artifact.datecreated})
         div
             a(href='/project/'+projectid+'/upload') Upload Artifact
