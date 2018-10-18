@@ -76,6 +76,15 @@ function getAllProjects(callback) {
     })
 }
 
+function getAllProjectArtifacts(artifactpath) {
+    const artifacts = fs.readdirSync(artifactpath)
+    const artifactnames = []
+    artifacts.forEach((artifact)=>{
+        artifactnames.push(path.basename(artifact))
+    })
+    return artifactnames
+}
+
 function getProjectData(projectid, callback) {
     const projectroot = path.join(rootdir,projectid)
     const projinfofile = path.join(projectroot,"project.json")
@@ -91,6 +100,7 @@ function getProjectData(projectid, callback) {
             if(fs.existsSync(artifactpath)) {
                 fs.readdir(artifactpath,(err,items)=>{
                     projinfo['numartifacts'] = items.length
+                    projinfo['artifacts'] = getAllProjectArtifacts(projinfo.artifactpath)
                     callback(projinfo)
                 })
             } else {

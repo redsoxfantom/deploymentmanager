@@ -38,6 +38,10 @@ router.get('/project/:projectid/upload',(req,res)=>{
     })
 })
 
+router.get("/project/:projectid/:artifactid(\\d+)",(req,res)=>{
+    res.redirect('/projects/project/'+req.params.projectid)
+})
+
 router.post('/project/:projectid/upload',upload.array('files'),(req,res)=>{
     const projid = req.params.projectid
     projectmanager.uploadArtifact(projid,req.body.desc,req.body.commitid,req.files,()=>{
