@@ -4,7 +4,7 @@ html
     body
         include commonheader.pug
         h1=project.name
-        form(method='post', action='/projects/project/'+projectid+'/upload', enctype='multipart/form-data')
+        form(method='post', action='/project/'+projectid+'/upload', enctype='multipart/form-data')
             div
                 label(for='desc') Artifact Description:
                 div

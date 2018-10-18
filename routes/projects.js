@@ -12,60 +12,6 @@ router.get('/',(req,res)=>{
     })
 })
 
-router.get('/project/:projectid',(req,res)=>{
-    const projectid = req.params.projectid
-    projectmanager.getProjectData(projectid,(projectdata)=>{
-        if(projectdata === undefined) {
-            res.redirect('/projects')
-        } else {
-            res.locals.project = projectdata
-            res.locals.projectid = projectid
-            res.render('project')
-        }
-    })
-})
-
-router.get('/project/:projectid/upload',(req,res)=>{
-    const projectid = req.params.projectid
-    projectmanager.getProjectData(projectid,(projectdata)=>{
-        if(projectdata === undefined) {
-            res.redirect('/projects')
-        } else {
-            res.locals.project = projectdata
-            res.locals.projectid = projectid
-            res.render('upload')
-        }
-    })
-})
-
-router.get("/project/:projectid/:artifactid(\\d+)",(req,res)=>{
-    const projectid = req.params.projectid
-    const artifactid = req.params.artifactid
-    projectmanager.getProjectData(projectid, (data)=>{
-        if(data === undefined) {
-            res.redirect('/projects/')
-        } else {
-            projectmanager.getArtifactData(projectid,artifactid, (artifactdata)=>{
-                if(artifactdata === undefined) {
-                    res.redirect('/projects/project/'+projectid)
-                } else {
-                    res.locals.artifactid = artifactid
-                    res.locals.artifact = artifactdata
-                    res.locals.project = data
-                    res.render('artifact')
-                }
-            })
-        }
-    })
-})
-
-router.post('/project/:projectid/upload',upload.array('files'),(req,res)=>{
-    const projid = req.params.projectid
-    projectmanager.uploadArtifact(projid,req.body.desc,req.body.commitid,req.files,()=>{
-        res.redirect('/projects/project/'+projid)
-    })
-})
-
 router.get('/new',(req,res)=>{
     res.render('newproject')
 })
