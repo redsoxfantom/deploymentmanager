@@ -4,7 +4,7 @@ html
     body
         include commonheader.pug
         h1=project.name
-        form(method='post', action='/projects/'+projectid+'/upload')
+        form(method='post', action='/projects/project/'+projectid+'/upload', enctype='multipart/form-data')
             div
                 label(for='desc') Artifact Description:
                 div
@@ -14,5 +14,9 @@ html
                     label(for='commitid') Commit ID:
                     div
                         input(type='text', name='commitid')
+            div
+                label(for='files') Files To Upload:
+                div
+                    input(type='file', name='files', multiple)
             div
                 button(type='submit') Submit

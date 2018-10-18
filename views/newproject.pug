@@ -3,7 +3,7 @@ html
         title='New Project'
     body
         include commonheader.pug
-        form(method='post', action='/projects/new')
+        form(method='post', action='/projects/new', enctype='multipart/form-data')
             div
                 label(for='name') Name:
                 div
@@ -17,7 +17,7 @@ html
                 div
                     input(type='text', name='gitrepo')
             div
-                label(for='numartifacts') Number of Artifacts:
+                label(for='maxnumartifacts') Number of Artifacts:
                 div
                     input(type='number', name='numartifacts')
             div

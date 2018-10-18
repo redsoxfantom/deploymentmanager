@@ -8,6 +8,7 @@ const uuid = require('uuid/v4')
 if(!fs.existsSync(rootdir)) {
     fsManager.mkdir(rootdir)
 }
+console.log('Project files will be stored in '+rootdir)
 
 function getOSArray(projdef) {
     osArr = []
@@ -27,13 +28,12 @@ function createNewProject(projectdefinition,callback) {
     projectjson = {
         name: projectdefinition.name,
         description: projectdefinition.desc,
-        numartifacts: projectdefinition.numartifacts
+        maxnumartifacts: projectdefinition.numartifacts
     }
     projectjson["operatingsystems"] = getOSArray(projectdefinition)
     if(projectdefinition['gitrepo'] !== "") {
         projectjson['gitrepo'] = projectdefinition['gitrepo']
     }
-
     foldername = uuid()
     projectjson['uuid'] = foldername
     projectstr = JSON.stringify(projectjson)
@@ -77,18 +77,77 @@ function getAllProjects(callback) {
 }
 
 function getProjectData(projectid, callback) {
-    const projinfofile = path.join(rootdir,projectid,"project.json")
+    const projectroot = path.join(rootdir,projectid)
+    const projinfofile = path.join(projectroot,"project.json")
     if(!fs.existsSync(projinfofile)) {
         callback()
     }
     else {
         fs.readFile(projinfofile, (err, info) => {
             const projinfo = JSON.parse(info)
-            callback(projinfo)
+            projinfo['projectroot'] = projectroot
+            const artifactpath = path.join(projectroot,'artifacts')
+            projinfo['artifactpath'] = artifactpath
+            if(fs.existsSync(artifactpath)) {
+                fs.readdir(artifactpath,(err,items)=>{
+                    projinfo['numartifacts'] = items.length
+                    callback(projinfo)
+                })
+            } else {
+                projinfo['numartifacts'] = 0
+                callback(projinfo)
+            }
         })
     }
+}
+
+function createArtifactJson(artifactpath,description,commitid,callback) {
+    artifactdata = {description:description}
+    if(commitid !== undefined) {
+        artifactdata['commitid'] = commitid
+    }
+    artifactstr = JSON.stringify(artifactdata)
+    fs.writeFile(path.join(artifactpath,'artifact.json'),artifactstr,(err)=>{
+        callback()
+    })
+}
+
+function createNewArtifact(projectdata,description,commitid,callback) {
+    var artifactpath = ""
+    if(!fs.existsSync(projectdata.artifactpath)) {
+        artifactpath = path.join(projectdata.artifactpath,'0')
+        fsManager.mkdir(artifactpath)
+    } else {
+        const preexistingartifacts = fs.readdirSync(projectdata.artifactpath)
+        const newartifactname = preexistingartifacts.length
+        artifactpath = path.join(projectdata.artifactpath,newartifactname.toString())
+        fsManager.mkdir(artifactpath)
+    }
+    createArtifactJson(artifactpath,description,commitid,()=>{
+        const datapath = path.join(artifactpath,'data')
+        fsManager.mkdir(datapath)
+        callback(datapath)
+    })
+}
+
+function uploadArtifact(projectid,description,commitid,files,callback) {
+    getProjectData(projectid,(data)=>{
+        if(data === undefined) {
+            callback()
+        } else {
+            createNewArtifact(data,description,commitid,(artifactpath)=>{
+                files.forEach((file)=>{
+                    const src = file.path
+                    const dest = path.join(artifactpath,file.originalname)
+                    fs.renameSync(src,dest)
+                })
+                callback()
+            })
+        }
+    })
 }
 
 module.exports.getAllProjects = (callback) => {getAllProjects(callback)}
 module.exports.getProjectData = (projectid,callback)=>{getProjectData(projectid,callback)}
 module.exports.createNewProject = createNewProject
+module.exports.uploadArtifact = uploadArtifact
