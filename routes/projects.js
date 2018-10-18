@@ -39,7 +39,24 @@ router.get('/project/:projectid/upload',(req,res)=>{
 })
 
 router.get("/project/:projectid/:artifactid(\\d+)",(req,res)=>{
-    res.redirect('/projects/project/'+req.params.projectid)
+    const projectid = req.params.projectid
+    const artifactid = req.params.artifactid
+    projectmanager.getProjectData(projectid, (data)=>{
+        if(data === undefined) {
+            res.redirect('/projects/')
+        } else {
+            projectmanager.getArtifactData(projectid,artifactid, (artifactdata)=>{
+                if(artifactdata === undefined) {
+                    res.redirect('/projects/project/'+projectid)
+                } else {
+                    res.locals.artifactid = artifactid
+                    res.locals.artifact = artifactdata
+                    res.locals.project = data
+                    res.render('artifact')
+                }
+            })
+        }
+    })
 })
 
 router.post('/project/:projectid/upload',upload.array('files'),(req,res)=>{

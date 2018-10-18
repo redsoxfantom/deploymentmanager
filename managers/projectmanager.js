@@ -112,7 +112,10 @@ function getProjectData(projectid, callback) {
 }
 
 function createArtifactJson(artifactpath,description,commitid,callback) {
-    artifactdata = {description:description}
+    artifactdata = {
+        description:description,
+        datecreated:new Date()
+    }
     if(commitid !== undefined) {
         artifactdata['commitid'] = commitid
     }
@@ -134,7 +137,7 @@ function createNewArtifact(projectdata,description,commitid,callback) {
         fsManager.mkdir(artifactpath)
     }
     createArtifactJson(artifactpath,description,commitid,()=>{
-        const datapath = path.join(artifactpath,'data')
+        const datapath = path.join(artifactpath,'data',"original")
         fsManager.mkdir(datapath)
         callback(datapath)
     })
@@ -157,7 +160,26 @@ function uploadArtifact(projectid,description,commitid,files,callback) {
     })
 }
 
+function getArtifactData(projectid, artifactid, callback) {
+    getProjectData(projectid,(data)=>{
+        if(data === undefined) {
+            callback()
+        } else {
+            artifactpath = path.join(data.artifactpath,artifactid)
+            if(!fs.existsSync(artifactpath)) {
+                callback()
+            } else {
+                artifactdatapath = path.join(artifactpath,"artifact.json")
+                artifactdatastr = fs.readFileSync(artifactdatapath)
+                artifactdata = JSON.parse(artifactdatastr)
+                callback(artifactdata)
+            }
+        }
+    })
+}
+
 module.exports.getAllProjects = getAllProjects
 module.exports.getProjectData = getProjectData
 module.exports.createNewProject = createNewProject
 module.exports.uploadArtifact = uploadArtifact
+module.exports.getArtifactData = getArtifactData

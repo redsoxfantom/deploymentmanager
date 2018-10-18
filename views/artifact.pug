@@ -1,0 +1,10 @@
+html
+    head
+        title='New Project'
+    body
+        include commonheader.pug
+        h1=project.name+"-"+artifactid
+        h3="Created on: "+artifact.datecreated
+        p=artifact.description
+        if artifact.commitid !== undefined
+            p="Commit: "+artifact.commitid
