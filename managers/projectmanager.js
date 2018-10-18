@@ -3,6 +3,7 @@ const fs = require('fs')
 const async = require('async')
 const fsManager = require('./filesystemmanager')
 const rootdir = path.join(fsManager.dynamics,"projects")
+const artifactmanager = require('./artifactmanager')
 const uuid = require('uuid/v4')
 
 if(!fs.existsSync(rootdir)) {
@@ -76,15 +77,6 @@ function getAllProjects(callback) {
     })
 }
 
-function getAllProjectArtifacts(artifactpath) {
-    const artifacts = fs.readdirSync(artifactpath)
-    const artifactnames = []
-    artifacts.forEach((artifact)=>{
-        artifactnames.push(path.basename(artifact))
-    })
-    return artifactnames
-}
-
 function getProjectData(projectid, callback) {
     const projectroot = path.join(rootdir,projectid)
     const projinfofile = path.join(projectroot,"project.json")
@@ -100,7 +92,7 @@ function getProjectData(projectid, callback) {
             if(fs.existsSync(artifactpath)) {
                 fs.readdir(artifactpath,(err,items)=>{
                     projinfo['numartifacts'] = items.length
-                    projinfo['artifacts'] = getAllProjectArtifacts(projinfo.artifactpath)
+                    projinfo['artifacts'] = artifactmanager.getAllProjectArtifacts(projinfo.artifactpath)
                     callback(projinfo)
                 })
             } else {
@@ -111,77 +103,6 @@ function getProjectData(projectid, callback) {
     }
 }
 
-function createArtifactJson(artifactpath,description,commitid,callback) {
-    artifactdata = {
-        description:description,
-        datecreated:new Date()
-    }
-    if(commitid !== undefined) {
-        artifactdata['commitid'] = commitid
-    }
-    artifactstr = JSON.stringify(artifactdata)
-    fs.writeFile(path.join(artifactpath,'artifact.json'),artifactstr,(err)=>{
-        callback()
-    })
-}
-
-function createNewArtifact(projectdata,description,commitid,callback) {
-    var artifactpath = ""
-    if(!fs.existsSync(projectdata.artifactpath)) {
-        artifactpath = path.join(projectdata.artifactpath,'0')
-        fsManager.mkdir(artifactpath)
-    } else {
-        const preexistingartifacts = fs.readdirSync(projectdata.artifactpath).sort((a,b)=>{
-            return a - b
-        })
-        const newartifactname = parseInt(preexistingartifacts[preexistingartifacts.length-1])+1
-        artifactpath = path.join(projectdata.artifactpath,newartifactname.toString())
-        fsManager.mkdir(artifactpath)
-    }
-    createArtifactJson(artifactpath,description,commitid,()=>{
-        const datapath = path.join(artifactpath,'data',"original")
-        fsManager.mkdir(datapath)
-        callback(datapath)
-    })
-}
-
-function uploadArtifact(projectid,description,commitid,files,callback) {
-    getProjectData(projectid,(data)=>{
-        if(data === undefined) {
-            callback()
-        } else {
-            createNewArtifact(data,description,commitid,(artifactpath)=>{
-                files.forEach((file)=>{
-                    const src = file.path
-                    const dest = path.join(artifactpath,file.originalname)
-                    fs.renameSync(src,dest)
-                })
-                callback()
-            })
-        }
-    })
-}
-
-function getArtifactData(projectid, artifactid, callback) {
-    getProjectData(projectid,(data)=>{
-        if(data === undefined) {
-            callback()
-        } else {
-            artifactpath = path.join(data.artifactpath,artifactid)
-            if(!fs.existsSync(artifactpath)) {
-                callback()
-            } else {
-                artifactdatapath = path.join(artifactpath,"artifact.json")
-                artifactdatastr = fs.readFileSync(artifactdatapath)
-                artifactdata = JSON.parse(artifactdatastr)
-                callback(artifactdata)
-            }
-        }
-    })
-}
-
 module.exports.getAllProjects = getAllProjects
 module.exports.getProjectData = getProjectData
 module.exports.createNewProject = createNewProject
-module.exports.uploadArtifact = uploadArtifact
-module.exports.getArtifactData = getArtifactData

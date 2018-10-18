@@ -1,5 +1,6 @@
 const router = require('express').Router()
 const projectmanager = require('../managers/projectmanager.js')
+const artifactmanager = require('../managers/artifactmanager')
 const fsManager = require('../managers/filesystemmanager')
 const multer = require('multer')
 const path = require('path')
@@ -38,7 +39,7 @@ router.get("/:projectid/:artifactid(\\d+)",(req,res)=>{
         if(data === undefined) {
             res.redirect('/projects')
         } else {
-            projectmanager.getArtifactData(projectid,artifactid, (artifactdata)=>{
+            artifactmanager.getArtifactData(projectid,artifactid, (artifactdata)=>{
                 if(artifactdata === undefined) {
                     res.redirect('/project/'+projectid)
                 } else {
@@ -54,7 +55,7 @@ router.get("/:projectid/:artifactid(\\d+)",(req,res)=>{
 
 router.post('/:projectid/upload',upload.array('files'),(req,res)=>{
     const projid = req.params.projectid
-    projectmanager.uploadArtifact(projid,req.body.desc,req.body.commitid,req.files,()=>{
+    artifactmanager.uploadArtifact(projid,req.body.desc,req.body.commitid,req.files,()=>{
         res.redirect('/project/'+projid)
     })
 })
