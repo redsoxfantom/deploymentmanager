@@ -65,9 +65,11 @@ function uploadArtifact(projectid,description,commitid,files,callback) {
                     const dest = path.join(artifactpath,file.originalname)
                     fs.renameSync(src,dest)
                 })
+                const processingfile = path.join(path.dirname(artifactpath),'.processing')
+                fs.writeFileSync(processingfile,"")
                 callback()
                 fsManager.createArchives(artifactpath,data.operatingsystems,()=>{
-
+                    fs.unlinkSync(processingfile)
                 })
             })
         }
