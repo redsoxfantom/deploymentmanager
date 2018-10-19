@@ -4,7 +4,9 @@ const fsManager = require('./filesystemmanager')
 const projectmanager = require('./projectmanager')
 
 function getAllProjectArtifacts(artifactpath) {
-    const artifacts = fs.readdirSync(artifactpath)
+    const artifacts = fs.readdirSync(artifactpath).sort((a,b)=>{
+        return parseInt(a)-parseInt(b)
+    })
     const artifactnames = []
     artifacts.forEach((artifact)=>{
         artifactfile = path.join(artifactpath,artifact,"artifact.json")
@@ -64,6 +66,9 @@ function uploadArtifact(projectid,description,commitid,files,callback) {
                     fs.renameSync(src,dest)
                 })
                 callback()
+                fsManager.createArchives(artifactpath,data.operatingsystems,()=>{
+
+                })
             })
         }
     })
