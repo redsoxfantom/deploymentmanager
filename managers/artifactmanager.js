@@ -10,11 +10,17 @@ function getAllProjectArtifacts(artifactpath) {
     const artifactnames = []
     artifacts.forEach((artifact)=>{
         artifactfile = path.join(artifactpath,artifact,"artifact.json")
+        processingfile = path.join(artifactpath,artifact,"data",".processinf")
+        let isBeingProcessed = false
+        if(fs.existsSync(processingfile)) {
+            isBeingProcessed = true
+        }
         artifactfiledata = fs.readFileSync(artifactfile)
         artifactdata = JSON.parse(artifactfiledata)
         artifactnames.push({
             name: path.basename(artifact),
-            datecreated: artifactdata.datecreated
+            datecreated: artifactdata.datecreated,
+            isbeingprocessed: isBeingProcessed
         })
     })
     return artifactnames
@@ -66,10 +72,12 @@ function uploadArtifact(projectid,description,commitid,files,callback) {
                     fs.renameSync(src,dest)
                 })
                 const processingfile = path.join(path.dirname(artifactpath),'.processing')
+                console.log("Processing artifact")
                 fs.writeFileSync(processingfile,"")
                 callback()
                 fsManager.createArchives(artifactpath,data.operatingsystems,()=>{
                     fs.unlinkSync(processingfile)
+                    console.log("Processing complete")
                 })
             })
         }
