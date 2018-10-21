@@ -8,3 +8,8 @@ html
         p=artifact.description
         if artifact.commitid !== undefined
             p="Commit: "+artifact.commitid
+        p="Downloads"
+        ul
+            each os in project.operatingsystems
+                li
+                    a(href='/project/'+projectid+'/'+artifactid+'/'+os) #{os}

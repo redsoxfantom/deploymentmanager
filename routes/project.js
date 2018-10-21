@@ -43,6 +43,7 @@ router.get("/:projectid/:artifactid(\\d+)",(req,res)=>{
                 if(artifactdata === undefined) {
                     res.redirect('/project/'+projectid)
                 } else {
+                    res.locals.projectid = projectid
                     res.locals.artifactid = artifactid
                     res.locals.artifact = artifactdata
                     res.locals.project = data
