@@ -54,6 +54,25 @@ router.get("/:projectid/:artifactid(\\d+)",(req,res)=>{
     })
 })
 
+router.get("/:projectid/:artifactid(\\d+)/:operatingsystem",(req,res)=>{
+    const projectid = req.params.projectid
+    const artifactid = req.params.artifactid
+    const os = req.params.operatingsystem
+    projectmanager.getProjectData(projectid, (data)=>{
+        if(data === undefined) {
+            res.redirect('/projects')
+        } else {
+            artifactmanager.getArtifactData(projectid,artifactid, (artifactdata)=>{
+                if(artifactdata === undefined) {
+                    res.redirect('/project/'+projectid)
+                } else {
+                    res.download(artifactmanager.getPathToOsFile(artifactdata.artifactpath,os))
+                }
+            })
+        }
+    })
+})
+
 router.post('/:projectid/upload',upload.array('files'),(req,res)=>{
     const projid = req.params.projectid
     artifactmanager.uploadArtifact(projid,req.body.desc,req.body.commitid,req.files,()=>{

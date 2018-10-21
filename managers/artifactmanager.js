@@ -84,6 +84,18 @@ function uploadArtifact(projectid,description,commitid,files,callback) {
     })
 }
 
+function getPathToOsFile(artifactpath,ostype) {
+    switch(ostype) {
+        case "Windows":
+            return path.join(artifactpath,"data","Windows.zip")
+            break
+        case "MacOS":
+            break
+        case "Linux":
+            break
+    }
+}
+
 function getArtifactData(projectid, artifactid, callback) {
     projectmanager.getProjectData(projectid,(data)=>{
         if(data === undefined) {
@@ -96,6 +108,7 @@ function getArtifactData(projectid, artifactid, callback) {
                 artifactdatapath = path.join(artifactpath,"artifact.json")
                 artifactdatastr = fs.readFileSync(artifactdatapath)
                 artifactdata = JSON.parse(artifactdatastr)
+                artifactdata['artifactpath'] = artifactpath
                 callback(artifactdata)
             }
         }
@@ -105,3 +118,4 @@ function getArtifactData(projectid, artifactid, callback) {
 module.exports.uploadArtifact = uploadArtifact
 module.exports.getArtifactData = getArtifactData
 module.exports.getAllProjectArtifacts = getAllProjectArtifacts
+module.exports.getPathToOsFile = getPathToOsFile
